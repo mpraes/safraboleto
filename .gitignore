@@ -45,3 +45,8 @@ htmlcov/
 
 # Data files (if sensitive)
 # services/*/mock_data/*.json
+
+# Environment variables
+.env
+.env.local
+.env.*.local

@@ -6,6 +6,79 @@ Sistema de automação de cobrança e renegociação B2B para empresas do agrone
 
 O SafraBoleto é uma solução que automatiza o contato inicial e recorrente de cobrança B2B por canais digitais, permitindo que clientes empresariais consultem faturas em aberto, negociem opções de pagamento dentro das regras de crédito e gerem boletos/PIX de forma autônoma.
 
+## 🏗️ Arquitetura do Sistema
+
+```mermaid
+graph TB
+    subgraph "Cliente"
+        User[👤 Cliente B2B<br/>Portal Web/WhatsApp]
+    end
+    
+    subgraph "Aplicação Principal"
+        Frontend[🌐 Frontend<br/>React/Next.js]
+        Backend[⚙️ Backend API<br/>FastAPI]
+        Agent[🤖 LangGraph Agent<br/>Orquestrador de Conversação]
+    end
+    
+    subgraph "Sistemas Externos - APIs Mock"
+        ERP[📊 ERP Service<br/>:8001<br/>Clientes & Faturas]
+        Payment[💳 Payment Service<br/>:8002<br/>Boletos & PIX]
+        Credit[📋 Credit Service<br/>:8003<br/>Regras de Crédito]
+        Notification[📧 Notification Service<br/>:8004<br/>WhatsApp/SMS/Email]
+        Session[💾 Session Service<br/>:8005<br/>Estado da Sessão]
+        Logging[📝 Logging Service<br/>:8006<br/>Interações]
+    end
+    
+    subgraph "Infraestrutura"
+        Redis[(🔴 Redis<br/>Cache & Sessões)]
+        MockData[(📁 Dados Mock<br/>cnpomapa.xlsx)]
+    end
+    
+    User -->|Interage| Frontend
+    Frontend -->|API Calls| Backend
+    Backend -->|Orquestra| Agent
+    
+    Agent -->|Consulta| ERP
+    Agent -->|Gera| Payment
+    Agent -->|Calcula| Credit
+    Agent -->|Envia| Notification
+    Agent -->|Armazena| Session
+    Agent -->|Registra| Logging
+    
+    Credit -->|Consulta| ERP
+    Payment -->|Usa| ERP
+    Session -->|Usa| Redis
+    ERP -->|Carrega| MockData
+    
+    style User fill:#e1f5ff
+    style Frontend fill:#fff4e1
+    style Backend fill:#fff4e1
+    style Agent fill:#ffe1f5
+    style ERP fill:#e8f5e9
+    style Payment fill:#e8f5e9
+    style Credit fill:#e8f5e9
+    style Notification fill:#e8f5e9
+    style Session fill:#e8f5e9
+    style Logging fill:#e8f5e9
+    style Redis fill:#ffebee
+    style MockData fill:#f3e5f5
+```
+
+### Fluxo Principal
+
+1. **Cliente** acessa o sistema via Portal Web ou WhatsApp
+2. **Frontend** recebe a interação e envia para o **Backend**
+3. **Backend** orquestra o **LangGraph Agent** que gerencia a conversa
+4. **Agent** interage com os sistemas externos:
+   - Consulta **ERP Service** para obter dados do cliente e faturas
+   - Usa **Credit Service** para gerar cenários de renegociação
+   - Solicita **Payment Service** para gerar boletos/PIX
+   - Envia notificações via **Notification Service**
+   - Armazena estado da sessão no **Session Service**
+   - Registra interações no **Logging Service**
+5. **Redis** armazena estado temporário das sessões
+6. **Dados Mock** são carregados do arquivo Excel para popular os serviços
+
 ### Objetivos
 
 - Automatizar cobrança B2B por canais digitais (portal web, WhatsApp, e-mail)

@@ -11,6 +11,9 @@ dependencies = [
     "python-multipart>=0.0.6",
     "pandas>=2.0.0",
     "openpyxl>=3.1.0",
+    "asyncpg>=0.29.0",  # Driver PostgreSQL assíncrono
+    "sqlalchemy[asyncio]>=2.0.0",  # ORM para PostgreSQL
+    "redis>=5.0.1",  # Para session service
 ]
 
 [build-system]

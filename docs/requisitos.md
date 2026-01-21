@@ -312,14 +312,24 @@ safraboleto/
 └── ...
 ```
 
-### 8.4. Dados Mock
+### 8.4. Base de Dados
 
-- **Fonte:** `docs/cnpomapa30092019.xlsx`
-- **Extração:** Criar script para extrair CNPJs válidos (1.069 empresas)
-- **Geração:**
-  - Clientes: CNPJ, nome, rating (A/B/C/D), limites de crédito, contatos
-  - Faturas: 3-8 faturas por cliente com valores e datas variadas
-  - Ratings distribuídos: A (28%), B (42%), C (20%), D (10%)
+- **Sistema:** PostgreSQL rodando no Docker
+- **Uso:** Todos os sistemas externos compartilham a mesma instância PostgreSQL
+- **Tabelas principais:**
+  - `customers` - Dados cadastrais dos clientes
+  - `invoices` - Faturas em aberto
+  - `agreements` - Acordos de renegociação
+  - `payments` - Boletos e PIX gerados
+  - `sessions` - Estado das sessões do agente
+  - `interactions` - Log de interações
+- **População inicial:**
+  - **Fonte:** `docs/cnpomapa30092019.xlsx`
+  - **Extração:** Script para extrair CNPJs válidos (1.069 empresas)
+  - **Geração:**
+    - Clientes: CNPJ, nome, rating (A/B/C/D), limites de crédito, contatos
+    - Faturas: 3-8 faturas por cliente com valores e datas variadas
+    - Ratings distribuídos: A (28%), B (42%), C (20%), D (10%)
 
 ### 8.5. Especificações Técnicas
 
@@ -337,17 +347,21 @@ Cada serviço deve ter:
 fastapi>=0.104.1
 uvicorn[standard]>=0.24.0
 pydantic>=2.5.0
-redis>=5.0.1
+asyncpg>=0.29.0  # Driver PostgreSQL assíncrono
+sqlalchemy[asyncio]>=2.0.0  # ORM para PostgreSQL
+redis>=5.0.1  # Para session service
 pandas>=2.0.0
 openpyxl>=3.1.0
 ```
 
 ### 8.7. Próximos Passos
 
-1. Criar estrutura de pastas `integrations/`
-2. Implementar serviço ERP com dados do xlsx
-3. Implementar motor de regras de crédito
-4. Implementar serviços restantes na ordem de prioridade
-5. Criar script de geração de dados mock do xlsx
-6. Testar integração entre serviços
+1. ✅ Criar estrutura de pastas `integrations/`
+2. ⏳ Configurar PostgreSQL no Docker
+3. ⏳ Criar schema do banco de dados (tabelas para todos os serviços)
+4. ⏳ Implementar serviço ERP com conexão ao PostgreSQL
+5. ⏳ Implementar motor de regras de crédito
+6. ⏳ Implementar serviços restantes na ordem de prioridade
+7. ⏳ Criar script de população inicial do banco a partir do xlsx
+8. ⏳ Testar integração entre serviços
 

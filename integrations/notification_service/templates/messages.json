@@ -1,0 +1,23 @@
+{
+    "agreement_confirmation": {
+        "whatsapp": "Olá {name}! Seu acordo de renegociação foi aprovado.\n\nAcordo: {agreement_id}\nValor total: R$ {total_amount:,.2f}\nParcelas: {installments_count}x\nPrimeira parcela: {first_due_date}\n\nAcesse o link para gerar os boletos: {link}",
+        "email": {
+            "subject": "Acordo de Renegociação Aprovado - {agreement_id}",
+            "body": "Prezado(a) {name},\n\nSeu acordo foi aprovado.\n\nAcordo: {agreement_id}\nValor total: R$ {total_amount:,.2f}\nParcelas: {installments_count}x\nPrimeira parcela: {first_due_date}\n\nAcesse o link para gerar os boletos: {link}"
+        }
+    },
+    "payment_link": {
+        "whatsapp": "Olá {name}! Segue o link para pagamento:\n\n{payment_link}\n\nVencimento: {due_date}",
+        "email": {
+            "subject": "Link de Pagamento - {invoice_number}",
+            "body": "Prezado(a) {name},\n\nSegue o link para pagamento:\n\n{payment_link}\n\nVencimento: {due_date}"
+        }
+    },
+    "invoice_reminder": {
+        "whatsapp": "Olá {name}! Lembrete: você tem faturas em aberto.\n\nTotal: R$ {total_amount:,.2f}\n\nAcesse: {link}",
+        "email": {
+            "subject": "Lembrete de Faturas em Aberto",
+            "body": "Prezado(a) {name},\n\nLembrete: você tem faturas em aberto.\n\nTotal: R$ {total_amount:,.2f}\n\nAcesse: {link}"
+        }
+    }
+}

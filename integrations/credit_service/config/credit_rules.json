@@ -1,0 +1,40 @@
+{
+    "rating_rules": {
+        "A": {
+            "max_installments": 6,
+            "min_installment_amount": 10000.00,
+            "max_discount_percentage": 5.0,
+            "interest_rate_range": [0.0, 0.025],
+            "requires_approval_threshold": 200000.00
+        },
+        "B": {
+            "max_installments": 4,
+            "min_installment_amount": 15000.00,
+            "max_discount_percentage": 3.0,
+            "interest_rate_range": [0.015, 0.033],
+            "requires_approval_threshold": 150000.00
+        },
+        "C": {
+            "max_installments": 3,
+            "min_installment_amount": 20000.00,
+            "max_discount_percentage": 1.0,
+            "interest_rate_range": [0.025, 0.05],
+            "requires_approval_threshold": 100000.00
+        },
+        "D": {
+            "max_installments": 2,
+            "min_installment_amount": 30000.00,
+            "max_discount_percentage": 0.0,
+            "interest_rate_range": [0.033, 0.10],
+            "requires_approval_threshold": 50000.00
+        }
+    },
+    "overdue_rules": {
+        "discount_by_days": {
+            "0-30": {"max_discount": 2.0},
+            "31-60": {"max_discount": 1.5},
+            "61-90": {"max_discount": 1.0},
+            "91+": {"max_discount": 0.0}
+        }
+    }
+}

@@ -31,7 +31,7 @@ graph TB
     
     subgraph "Infraestrutura"
         Redis[(🔴 Redis<br/>Cache & Sessões)]
-        MockData[(📁 Dados Mock<br/>cnpomapa.xlsx)]
+        PostgreSQL[(🐘 PostgreSQL<br/>Docker<br/>Base de Dados)]
     end
     
     User -->|Interage| Frontend
@@ -48,7 +48,12 @@ graph TB
     Credit -->|Consulta| ERP
     Payment -->|Usa| ERP
     Session -->|Usa| Redis
-    ERP -->|Carrega| MockData
+    ERP -->|Lê/Escreve| PostgreSQL
+    Payment -->|Lê/Escreve| PostgreSQL
+    Credit -->|Lê/Escreve| PostgreSQL
+    Notification -->|Lê/Escreve| PostgreSQL
+    Session -->|Lê/Escreve| PostgreSQL
+    Logging -->|Lê/Escreve| PostgreSQL
     
     style User fill:#e1f5ff
     style Frontend fill:#fff4e1
@@ -61,7 +66,7 @@ graph TB
     style Session fill:#e8f5e9
     style Logging fill:#e8f5e9
     style Redis fill:#ffebee
-    style MockData fill:#f3e5f5
+    style PostgreSQL fill:#e3f2fd
 ```
 
 ### Fluxo Principal
@@ -77,7 +82,8 @@ graph TB
    - Armazena estado da sessão no **Session Service**
    - Registra interações no **Logging Service**
 5. **Redis** armazena estado temporário das sessões
-6. **Dados Mock** são carregados do arquivo Excel para popular os serviços
+6. **PostgreSQL** (rodando no Docker) é a base de dados central para todos os sistemas externos
+7. **Dados iniciais** podem ser populados no PostgreSQL a partir do arquivo Excel (`cnpomapa30092019.xlsx`)
 
 ### Objetivos
 
@@ -110,6 +116,19 @@ source .venv/bin/activate  # Linux/Mac
 .venv\Scripts\activate  # Windows
 
 uv sync
+```
+
+### Iniciando a Infraestrutura
+
+1. Inicie o PostgreSQL no Docker:
+```bash
+cd docker
+docker-compose up -d postgres
+```
+
+2. Execute as migrações (quando disponíveis):
+```bash
+# Script de criação do schema será criado
 ```
 
 ### Executando os Sistemas Externos
@@ -159,7 +178,9 @@ safraboleto/
 │   └── logging_service/   # Porta 8006 - Logging de interações
 ├── backend/              # Aplicação backend principal (a criar)
 ├── frontend/             # Aplicação frontend (a criar)
-├── docker/               # Infraestrutura Docker (a criar)
+├── docker/               # Infraestrutura Docker
+│   ├── docker-compose.yml  # Orquestração de serviços
+│   └── postgres/        # Configuração PostgreSQL
 ├── docs/                 # Documentação
 │   ├── requisitos.md     # Requisitos e especificações
 │   └── cnpomapa30092019.xlsx  # Dados de referência para mock
@@ -179,7 +200,8 @@ API mock que simula o sistema ERP de contas a receber.
 - `POST /agreements` - Cria acordo de renegociação
 - `GET /agreements/{agreement_id}` - Consulta status do acordo
 
-**Dados mock:** Serão gerados a partir do arquivo `docs/cnpomapa30092019.xlsx`
+**Base de dados:** PostgreSQL (Docker)  
+**Dados iniciais:** Podem ser populados a partir do arquivo `docs/cnpomapa30092019.xlsx`
 
 ### 2. Serviço de Pagamentos (Porta 8002)
 
@@ -262,7 +284,7 @@ uv add --dev nome-do-pacote
 
 - **Requisitos completos:** Ver `docs/requisitos.md`
 - **Especificações técnicas:** Cada serviço tem documentação Swagger em `/docs`
-- **Dados de referência:** `docs/cnpomapa30092019.xlsx` (usado para gerar dados mock)
+- **Dados de referência:** `docs/cnpomapa30092019.xlsx` (usado para popular banco inicialmente)
 
 ## 🎯 Status do Projeto
 
@@ -275,8 +297,10 @@ uv add --dev nome-do-pacote
 
 ### ⏳ Em Progresso
 
+- [ ] Configuração do PostgreSQL no Docker
+- [ ] Criação do schema do banco de dados
 - [ ] Implementação dos endpoints dos serviços
-- [ ] Geração de dados mock do xlsx
+- [ ] Script de população inicial do banco a partir do xlsx
 - [ ] Integração com LangGraph agent
 - [ ] Implementação do backend principal
 - [ ] Implementação do frontend

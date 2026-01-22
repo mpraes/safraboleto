@@ -2,7 +2,7 @@
 Router para endpoints de pagamentos
 """
 from fastapi import APIRouter, HTTPException
-from ..models import GenerateBoletoRequest, GeneratePixRequest, PaymentResponse, PaymentStatus
+from integrations.payment_service.models import GenerateBoletoRequest, GeneratePixRequest, PaymentResponse, PaymentStatus
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 

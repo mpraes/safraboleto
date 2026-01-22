@@ -2,7 +2,7 @@
 Router para endpoints de notificações
 """
 from fastapi import APIRouter, HTTPException
-from ..models import SendNotificationRequest, NotificationResponse, NotificationStatus
+from integrations.notification_service.models import SendNotificationRequest, NotificationResponse, NotificationStatus
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 

@@ -2,7 +2,7 @@
 Router para endpoints de logging de interações
 """
 from fastapi import APIRouter, HTTPException
-from ..models import LogInteractionRequest, LogResponse, InteractionHistory
+from integrations.logging_service.models import LogInteractionRequest, LogResponse, InteractionHistory
 
 router = APIRouter(prefix="/interactions", tags=["interactions"])
 

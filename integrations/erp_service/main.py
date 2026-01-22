@@ -3,6 +3,13 @@ Serviço ERP Financeiro - API Mock
 Porta: 8001
 Responsável por: clientes, faturas e acordos
 """
+import sys
+from pathlib import Path
+
+# Adicionar o diretório raiz do projeto ao path para permitir imports
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -27,7 +34,7 @@ async def health_check():
     return {"status": "ok", "service": "erp_service"}
 
 # Importar routers
-from .routers import customers, invoices, agreements
+from integrations.erp_service.routers import customers, invoices, agreements
 
 app.include_router(customers.router)
 app.include_router(invoices.router)

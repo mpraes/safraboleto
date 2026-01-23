@@ -120,6 +120,82 @@
 - Canais:
   - WhatsApp (prioritário), webchat no portal B2B, link em e-mails de cobrança. [web:30][web:31]
 
+## 5.1. Requisitos Funcionais (RF) e Regras de Negócio (RN) - Enterprise
+
+### Requisitos Funcionais - Serviço ERP
+
+**RF-ERP-01:** O sistema deve identificar automaticamente o papel do contato (Comprador, Financeiro, Gestor) e adaptar a linguagem e permissões de acesso conforme o papel identificado.
+
+**RF-ERP-02:** O sistema deve suportar hierarquia de contatos, permitindo múltiplos contatos por cliente com papéis distintos e relacionamentos hierárquicos.
+
+**RF-ERP-03:** O sistema deve classificar clientes em tiers (Bronze, Prata, Ouro) baseado em critérios de negócio (volume, histórico, rating) e aplicar condições comerciais diferenciadas por tier.
+
+**RF-ERP-04:** O sistema deve rastrear o ciclo de vida completo de acordos, incluindo estados intermediários (Rascunho, Pendente Aprovação, Aprovado, Rejeitado, Cancelado).
+
+### Requisitos Funcionais - Motor de Crédito
+
+**RF-CREDIT-01:** O cálculo de dívida total deve utilizar juros compostos e multa pro-rata dia, calculados dinamicamente com base na data de vencimento e data atual, não valores estáticos pré-calculados.
+
+**RF-CREDIT-02:** O sistema deve gerar cenários de renegociação dinâmicos considerando capacidade de pagamento informada na sessão, restrições de datas e políticas de crédito do cliente.
+
+**RF-CREDIT-03:** O sistema deve validar alçadas de aprovação antes de confirmar acordos, verificando se o desconto ou condições negociadas ultrapassam os limites automáticos permitidos.
+
+**RF-CREDIT-04:** O sistema deve recalcular propostas em tempo real durante a negociação, incorporando novas restrições informadas pelo cliente sem perder o contexto da sessão.
+
+### Requisitos Funcionais - Serviço de Pagamentos
+
+**RF-PAYMENT-01:** A confirmação de pagamento deve ser assíncrona via Webhook, simulando o comportamento real de gateways bancários com delay de 10-30 segundos.
+
+**RF-PAYMENT-02:** O sistema deve implementar máquina de estados para pagamentos com transições validadas (Pendente → Processando → Confirmado/Falhou/Cancelado).
+
+**RF-PAYMENT-03:** O sistema deve suportar retentativas de webhook em caso de falha na entrega da confirmação, simulando comportamento resiliente de sistemas bancários.
+
+**RF-PAYMENT-04:** O sistema deve manter histórico completo de estados do pagamento, permitindo auditoria e rastreamento de todas as transições.
+
+### Requisitos Funcionais - Session Service
+
+**RF-SESSION-01:** O sistema deve implementar lógica de "Win-back" para clientes inativos há mais de 90 dias, aplicando estratégias de reengajamento automático quando detectado.
+
+**RF-SESSION-02:** O sistema deve rastrear padrões de comportamento por sessão, incluindo tempo de resposta, taxa de conversão e pontos de abandono.
+
+**RF-SESSION-03:** O sistema deve armazenar estado complexo da negociação, incluindo histórico de propostas apresentadas, restrições coletadas, preferências do cliente e contexto da conversa.
+
+### Regras de Negócio - Motor de Crédito
+
+**RN-CREDIT-01:** Descontos acima de 10% do valor total da dívida exigem aprovação humana simulada. O sistema deve marcar o acordo como "Pendente Aprovação" e aguardar confirmação antes de gerar boletos.
+
+**RN-CREDIT-02:** Descontos entre 5% e 10% podem ser aprovados automaticamente para clientes com rating A ou B, mas requerem aprovação para rating C ou D.
+
+**RN-CREDIT-03:** Clientes com rating D não podem receber descontos automáticos, independente do valor ou tempo de atraso.
+
+**RN-CREDIT-04:** O cálculo de juros compostos deve considerar a taxa mensal definida pelo rating do cliente, aplicada sobre o valor original da fatura mais multa, com capitalização mensal.
+
+**RN-CREDIT-05:** A multa deve ser calculada pro-rata dia, considerando o percentual de multa configurado e o número de dias de atraso desde a data de vencimento até a data de cálculo.
+
+**RN-CREDIT-06:** O número máximo de parcelas permitidas deve respeitar o tier do cliente: Ouro (até 6 parcelas), Prata (até 4 parcelas), Bronze (até 3 parcelas).
+
+**RN-CREDIT-07:** O valor mínimo de parcela deve ser respeitado conforme o rating do cliente, e nenhuma parcela pode ser inferior a R$ 1.000,00.
+
+### Regras de Negócio - Serviço ERP
+
+**RN-ERP-01:** Contatos com papel "Comprador" têm acesso limitado a consulta de faturas e geração de boletos, mas não podem iniciar renegociações.
+
+**RN-ERP-02:** Contatos com papel "Financeiro" têm acesso completo, incluindo renegociação e criação de acordos.
+
+**RN-ERP-03:** A linguagem do agente deve ser adaptada: para "Comprador" usar linguagem mais comercial e explicativa; para "Financeiro" usar linguagem mais técnica e direta.
+
+**RN-ERP-04:** Clientes tier Ouro têm prazos de pagamento estendidos (até 60 dias) e limites de crédito maiores.
+
+**RN-ERP-05:** Clientes tier Bronze têm prazos de pagamento reduzidos (até 30 dias) e condições mais restritivas.
+
+### Regras de Negócio - Session Service
+
+**RN-SESSION-01:** Clientes identificados como inativos há mais de 90 dias devem receber mensagem de win-back personalizada na próxima interação, oferecendo condições especiais de renegociação.
+
+**RN-SESSION-02:** A estratégia de win-back deve considerar o histórico do cliente: clientes com histórico positivo devem receber ofertas mais generosas.
+
+**RN-SESSION-03:** O TTL de sessão deve ser de 60 minutos de inatividade, após o qual o estado é persistido mas a sessão é marcada como inativa.
+
 ## 6. Integrações e artefatos/tooling para o LangGraph
 
 ### 6.1. Sistemas que devem existir (ou ser criados)

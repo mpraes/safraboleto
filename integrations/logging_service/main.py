@@ -3,6 +3,13 @@ Serviço de Logging - API Mock
 Porta: 8006
 Responsável por: registrar interações e eventos
 """
+import sys
+from pathlib import Path
+
+# Adicionar o diretório raiz do projeto ao path para permitir imports
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -26,7 +33,7 @@ async def health_check():
     return {"status": "ok", "service": "logging_service"}
 
 # Importar router
-from .routers import interactions
+from integrations.logging_service.routers import interactions
 
 app.include_router(interactions.router)
 

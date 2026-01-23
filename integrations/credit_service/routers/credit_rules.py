@@ -2,7 +2,7 @@
 Router para endpoints de regras de crédito
 """
 from fastapi import APIRouter, HTTPException
-from ..models import GenerateOptionsRequest, GenerateOptionsResponse, ValidateScenarioRequest, ValidateScenarioResponse
+from integrations.credit_service.models import GenerateOptionsRequest, GenerateOptionsResponse, ValidateScenarioRequest, ValidateScenarioResponse
 
 router = APIRouter(prefix="/credit-rules", tags=["credit-rules"])
 

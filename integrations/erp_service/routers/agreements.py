@@ -2,7 +2,7 @@
 Router para endpoints de acordos de renegociação
 """
 from fastapi import APIRouter, HTTPException
-from ..models import CreateAgreementRequest, Agreement
+from integrations.erp_service.models import CreateAgreementRequest, Agreement
 
 router = APIRouter(prefix="/agreements", tags=["agreements"])
 

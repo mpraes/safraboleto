@@ -3,13 +3,6 @@ Serviço de Pagamentos - API Mock
 Porta: 8002
 Responsável por: geração de boletos e PIX
 """
-import sys
-from pathlib import Path
-
-# Adicionar o diretório raiz do projeto ao path para permitir imports
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -27,12 +20,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 @app.get("/health")
 async def health_check():
     """Health check do serviço"""
     return {"status": "ok", "service": "payment_service"}
 
-# Importar router
+
 from integrations.payment_service.routers import payments
 
 app.include_router(payments.router)
